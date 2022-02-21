@@ -504,7 +504,7 @@ http.cors.allow-origin: &quot;*&quot;
         <category>软件部署</category>
       </categories>
       <tags>
-        <tag>JuputerHub</tag>
+        <tag>JupyterHub</tag>
       </tags>
   </entry>
   <entry>
