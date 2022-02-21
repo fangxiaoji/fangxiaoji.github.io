@@ -6,4 +6,19 @@
     <content><![CDATA[<p>关于本站</p>
 ]]></content>
   </entry>
+  <entry>
+    <title>Redis部署</title>
+    <url>/2022/02/21/redisSentinel/</url>
+    <content><![CDATA[<h2 id="一、Redis单机模式部署"><a href="#一、Redis单机模式部署" class="headerlink" title="一、Redis单机模式部署"></a>一、Redis单机模式部署</h2><ol>
+<li><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-4.0.2.tar.gz</span><br><span class="line"></span><br><span class="line">tar -zxvf redis-4.0.2.tar.gz</span><br><span class="line"></span><br><span class="line">yum install gcc</span><br><span class="line"></span><br><span class="line">cd redis-4.0.2</span><br><span class="line"></span><br><span class="line">make MALLOC=libc</span><br><span class="line"></span><br><span class="line">cd src </span><br><span class="line"></span><br><span class="line">make install</span><br></pre></td></tr></table></figure></li>
+<li><h3 id="修改redis-conf文件"><a href="#修改redis-conf文件" class="headerlink" title="修改redis.conf文件"></a>修改<strong>redis.conf文件</strong></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">vi redis.conf</span><br><span class="line"></span><br><span class="line">注释掉 bind 127.0.0.1</span><br><span class="line"></span><br><span class="line">修改protected-mode 为no</span><br><span class="line"></span><br><span class="line">修改daemonize 为yes</span><br></pre></td></tr></table></figure></li>
+<li><h3 id="后台启动"><a href="#后台启动" class="headerlink" title="后台启动"></a>后台启动</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./redis-server ../redis.conf</span><br></pre></td></tr></table></figure></li>
+<li><h3 id="开机自启动设置"><a href="#开机自启动设置" class="headerlink" title="开机自启动设置"></a>开机自启动设置</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir /etc/redis</span><br><span class="line">#复制redis配置文件(启动脚本需要用到配置文件内容,所以要复制)</span><br><span class="line">cp  /opt/redis-4.0.2/redis.conf /etc/redis/6379.conf</span><br><span class="line">#复制redis启动脚本</span><br><span class="line">cp  /opt/redis-4.0.2/utils/redis_init_script /etc/init.d/redis</span><br><span class="line"></span><br><span class="line">#修改启动脚本参数</span><br><span class="line">vi /etc/init.d/redis</span><br><span class="line">#在/etc/init.d/redis文件的头部添加下面两行注释代码,也就是在文件中#!/bin/sh的下方添加</span><br><span class="line"># chkconfig: 2345 10 90  </span><br><span class="line"># description: Start and Stop redis</span><br><span class="line"></span><br><span class="line">#同时还要修改参数,指定redis的安装路径</span><br><span class="line">EXEC=/opt/redis-4.0.2/src/redis-server</span><br><span class="line">CLIEXEC=/opt/redis-4.0.2/src/redis-cli</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><h3 id="开机自启动Redis"><a href="#开机自启动Redis" class="headerlink" title="开机自启动Redis"></a>开机自启动Redis</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">打开redis命令:service redis start</span><br><span class="line"></span><br><span class="line">关闭redis命令:service redis stop</span><br><span class="line"></span><br><span class="line">设为开机启动:chkconfig redis on</span><br><span class="line"></span><br><span class="line">设为开机关闭:chkconfig redis off</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Redis,Redis部署</tag>
+      </tags>
+  </entry>
 </search>
