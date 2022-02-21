@@ -87,8 +87,8 @@
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
         <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">0</span></a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">4</span></a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">4</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">5</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">5</span></a></li>
         <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
@@ -158,13 +158,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -193,6 +193,92 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://onos.love/2022/02/21/nfs%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="xuy">
+      <meta itemprop="description" content="记录工作内容,分享技术经验">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONOS">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/21/nfs%E9%83%A8%E7%BD%B2/" class="post-title-link" itemprop="url">NFS文件系统部署</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-02-21 11:35:28 / 修改时间：11:36:35" itemprop="dateCreated datePublished" datetime="2022-02-21T11:35:28+08:00">2022-02-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="集群部署"><a href="#集群部署" class="headerlink" title="集群部署"></a>集群部署</h3><p>NFS(network file system)网络文件系统，类似Windows中的文件夹共享，如下有三台机器A, B, C，它们需要访问同一个目录，目录中都是图片，传统的做法是把这些图片分别放到A, B, C。但是使用NFS只需要放到A上，然后A共享给B和C即可。访问的时候，B和C是通过网络的方式去访问A上的那个目录。</p>
+<p>server机（A）：192.168.144.101<br>Client机（B，C）：192.168.144.102  192.168.144.103</p>
+<h3 id="一、在A机上安装-NFS-服务器所需的软件包"><a href="#一、在A机上安装-NFS-服务器所需的软件包" class="headerlink" title="一、在A机上安装 NFS 服务器所需的软件包"></a>一、<strong>在A机上安装 NFS 服务器所需的软件包</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install nfs-utils   </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 实际上需要安装两个包nfs-utils和rpcbind, 不过当使用yum安装nfs-utils时会把rpcbind一起安装上</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、编辑exports文件，添加从机"><a href="#二、编辑exports文件，添加从机" class="headerlink" title="二、编辑exports文件，添加从机"></a>二、<strong>编辑exports文件，添加从机</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/exports   </span><br><span class="line"></span><br><span class="line">/data/nfs 192.168.144.102(rw,sync,insecure,no_subtree_check,no_root_squash) 192.168.144.103(rw,sync,insecure,no_subtree_check,no_root_squash)</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置说明：</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这一行分为三个部分：</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 第一部分：/data/nfs ，这个是本地要共享出去的目录。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 第二部分：192.168.144.100/120，允许访问的主机，可以是一个IP： 192.168.144.102，也可以是一个IP段：192.168.144.100/120</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 第三部分：括号中部分。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rw表示可读写，ro只读；</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> sync ：同步模式，内存中数据时时写入磁盘；async ：不同步，把内存中数据定期写入磁盘中；</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> no_root_squash ：加上这个选项后，root用户就会对共享的目录拥有至高的权限控制，就像是对本机的目录操作一样。不安全，不建议使用；root_squash：和上面的选项对应，root用户对共享目录的权限不高，只有普通用户的权限，即限制了root；all_squash：不管使用NFS的用户是谁，他的身份都会被限定成为一个指定的普通用户身份；</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> anonuid/anongid ：要和root_squash 以及all_squash一同使用，用于指定使用NFS的用户限定后的uid和gid，前提是本机的/etc/passwd中存在这个uid和gid。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> fsid=0表示将/opt/nfs整个目录包装成根目录</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="三、启动A机上nfs服务"><a href="#三、启动A机上nfs服务" class="headerlink" title="三、启动A机上nfs服务"></a><strong>三、启动A机上nfs服务</strong></h3><p>先为rpcbind和nfs做开机启动：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开机启动</span></span><br><span class="line">systemctl enable rpcbind.service    </span><br><span class="line">systemctl enable nfs-server.service    </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后分别启动rpcbind和nfs服务：</span></span><br><span class="line">systemctl start rpcbind.service    </span><br><span class="line">systemctl start nfs.service  </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 确认NFS服务器启动成功</span>  </span><br><span class="line">rpcinfo -p   </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看可挂载目录及可连接的IP</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">showmount -e 192.168.144.102</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="四、关闭A机上的防火墙或者给防火墙配置nfs的通过规则"><a href="#四、关闭A机上的防火墙或者给防火墙配置nfs的通过规则" class="headerlink" title="四、关闭A机上的防火墙或者给防火墙配置nfs的通过规则"></a><strong>四、关闭A机上的防火墙或者给防火墙配置nfs的通过规则</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">systemctl stop firewalld.service</span><br><span class="line">systemctl disable firewalld</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="五、在B，C机上配置clinet端"><a href="#五、在B，C机上配置clinet端" class="headerlink" title="五、在B，C机上配置clinet端"></a><strong>五、在B，C机上配置clinet端</strong></h3><p>1、安装nfs，并启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y nfs-utils</span><br><span class="line"></span><br><span class="line">systemctl enable rpcbind.service</span><br><span class="line"></span><br><span class="line">systemctl start rpcbind.service</span><br></pre></td></tr></table></figure>
+
+<p>客户端不需要启动nfs服务，只需要启动rpcbind服务.</p>
+<p>2、检查 NFS 服务器端是否有目录共享</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">showmount -e 192.168.144.102</span><br></pre></td></tr></table></figure>
+
+<p>3、使用 mount 挂载A服务器端的目录/data/nfs到客户端B的目录/data/nfs下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# mkdir /data/nfs   </span><br><span class="line"></span><br><span class="line">[root@localhost ~]# mount -t nfs 192.168.144.102:/data/nfs/ /data/nfs/    </span><br><span class="line"></span><br><span class="line">[root@localhost ~]# df -h    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">vim /etc/exports  </span><br><span class="line">exportfs  -arv</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 让修改过的配置文件生效</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>4、设为开机自动挂载</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi  /etc/fstab</span><br><span class="line"></span><br><span class="line">nfs01:/data/nfs    /data/nfs   nfs  defaults  0 0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
