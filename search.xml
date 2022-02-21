@@ -17,6 +17,9 @@
 <li><h3 id="开机自启动Redis"><a href="#开机自启动Redis" class="headerlink" title="开机自启动Redis"></a>开机自启动Redis</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 打开redis命令:</span></span><br><span class="line">service redis start</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭redis命令:</span></span><br><span class="line">service redis stop</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设为开机启动:</span></span><br><span class="line">chkconfig redis on</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设为开机关闭:</span></span><br><span class="line">chkconfig redis off</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
       <tags>
         <tag>Redis</tag>
         <tag>Redis部署</tag>
@@ -46,6 +49,9 @@
 <h3 id="5，测试用例："><a href="#5，测试用例：" class="headerlink" title="5，测试用例："></a>5，测试用例：</h3><p>一，简单用例：<br>1，停止master上的mysql服务，查看数据库是否能正常使用；恢复master上的mysql，查看数据是否同步。<br>2，停止slave上的mysql服务，查看数据库是否能正常使用；恢复slave上的mysql，查看数据是否同步。<br>3，关闭master服务器，查看数据库是否能正常使用；打开master服务器，查看数据是否正常同步。<br>4，关闭slave服务器，查看数据库是否能正常使用；打开slave服务器，查看数据是否正常同步。<br>5，关闭master服务器上的网络服务，查看数据库是否能正常使用；打开master网络服务，查看数据库是否正常同步。<br>6，关比slave服务器上的网络服务，查看数据库是否能正常使用；打开slave网络服务，查看数据库是否正常同步。</p>
 <p>二，复杂用例：<br>1，关闭master服务器，再打开master服务器，说明数据库跳到slave机器上；打开master服务器之后，查看数据库连接是否重新跳回master。<br>2，如果不跳回master，同样的操作对slave做一遍</p>
 ]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
       <tags>
         <tag>mysql</tag>
       </tags>
@@ -123,6 +129,9 @@
 
 <p>4、配置用户的ACL</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#列出所有主题的ACL设置</span><br><span class="line">/opt/kafka_2.13-2.7.0/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2191 --list</span><br><span class="line"># 允许 sys 用户读取和写入test主题</span><br><span class="line">/opt/kafka_2.13-2.7.0/bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2191 --add --allow-principal User:sys --operation Read --operation Write --topic test</span><br><span class="line"></span><br><span class="line">#往test主题中发送测试数据</span><br><span class="line">(1)producer.properties 文件加入以下属性</span><br><span class="line">security.protocol=SASL_PLAINTEXT</span><br><span class="line">sasl.mechanism=SCRAM-SHA-256</span><br><span class="line">sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required username=&quot;sys&quot; password=&quot;1qaz2wsx&quot;;</span><br><span class="line">(2)运行生产程序</span><br><span class="line">/opt/kafka_2.13-2.7.0/bin/kafka-console-producer.sh --broker-list 192.168.144.101:9092 --topic test --producer.config  /opt/kafka_2.13-2.7.0/config/producer.properties</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
       <tags>
         <tag>Kafka</tag>
       </tags>
@@ -153,8 +162,105 @@
 
 <p>4、设为开机自动挂载</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi  /etc/fstab</span><br><span class="line"></span><br><span class="line">nfs01:/data/nfs    /data/nfs   nfs  defaults  0 0</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
       <tags>
         <tag>nfs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>部署ELK日志收集</title>
+    <url>/2022/02/21/elk/</url>
+    <content><![CDATA[<h3 id="安装Elasticsearch"><a href="#安装Elasticsearch" class="headerlink" title="安装Elasticsearch"></a>安装Elasticsearch</h3><p>1.rpm -ivh elasticsearch-7.12.0-x86_64.rpm</p>
+<p>2.修改配置文件</p>
+<p>vim /etc/elasticsearch/elasticsearch.yml</p>
+<p>（1）单机模式</p>
+<p>​    network.host: 192.168.144.228</p>
+<p>​    discovery.seed_hosts: [“192.168.144.228”]</p>
+<p>​    discovery.type: single-node</p>
+<p>（2）集群模式</p>
+<pre><code>cluster.name: es-cluster 
+node.name: node01 #每台服务器分别设置
+node.master: true
+node.data: true 
+network.host: 192.168.11.35 #每台服务器分别设置
+http.port: 9200 
+discovery.zen.ping.unicast.hosts: [&quot;192.168.11.35&quot;,&quot;192.168.11.36&quot;,&quot;192.168.11.37&quot;] 
+discovery.zen.minimum_master_nodes: 2  #取值为N/2 + 1
+http.cors.enabled: true 
+http.cors.allow-origin: &quot;*&quot;
+</code></pre>
+<p> 3.启动、停止、查询状态</p>
+<p>systemctl start elasticsearch<br>systemctl stop elasticsearch<br>systemctl status elasticsearch</p>
+<p> 4.网页访问是否启动成功</p>
+<p>curl  127.0.0.1:9200</p>
+<ul>
+<li>安装elasticsearch-head   </li>
+<li>拉取镜像<br>docker pull mobz/elasticsearch-head:5 </li>
+<li>创建容器<br>docker create –name elasticsearch-head -p 9100:9100 mobz/elasticsearch-head:5 </li>
+<li>启动容器<br>docker start elasticsearch-head</li>
+<li>通过浏览器访问<br>ip:9100</li>
+</ul>
+<h3 id="安装kibana"><a href="#安装kibana" class="headerlink" title="安装kibana"></a>安装kibana</h3><p>1.安装包<br>rpm -ivh kibana-7.12.0-x86_64.rpm</p>
+<p>2.修改配置文件，配置IP地址</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi  /etc/kibana/kibana.yml</span><br><span class="line"></span><br><span class="line">server.host:  0.0.0.0 *#对外暴露服务的地址*  </span><br><span class="line"></span><br><span class="line">elasticsearch.hosts: [&quot;http://192.168.144.101:9200&quot;]  #单机模式</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">elasticsearch.hosts: [<span class="string">&quot;http://ip1:9200&quot;</span>, <span class="string">&quot;http://ip2:9200&quot;</span>]  <span class="comment">#集群模式</span></span></span><br></pre></td></tr></table></figure>
+
+<p>3.启动、停止、查询状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start kibana</span><br><span class="line">systemctl stop kibana</span><br><span class="line">systemctl status kibana</span><br></pre></td></tr></table></figure>
+
+<p>4.网页访问是否启动成功</p>
+<p>http:<em>//ip:5601/</em></p>
+<h3 id="安装Logstash"><a href="#安装Logstash" class="headerlink" title="安装Logstash"></a>安装Logstash</h3><ol>
+<li>安装包<br>rpm -ivh logstash-7.120.rpm</li>
+</ol>
+<p>2.修改配置文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">vi /etc/logstash/logstash-sample.conf</span><br><span class="line"></span><br><span class="line">input&#123;</span><br><span class="line">tcp &#123; </span><br><span class="line">mode =&gt; &quot;server&quot; </span><br><span class="line">host =&gt; &quot;0.0.0.0&quot; </span><br><span class="line">port =&gt; 4567 </span><br><span class="line">codec =&gt; json_lines </span><br><span class="line">&#125; </span><br><span class="line">&#125;</span><br><span class="line">filter&#123;</span><br><span class="line">json&#123;</span><br><span class="line">source =&gt; &quot;message&quot;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">output&#123;</span><br><span class="line">elasticsearch &#123;</span><br><span class="line">hosts =&gt; [&quot;192.168.144.101:9200&quot;]</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">hosts =&gt; [<span class="string">&quot;192.168.144.101:9200&quot;</span>,<span class="string">&quot;192.168.144.102:9200&quot;</span>]  <span class="comment">#集群模式</span></span></span><br><span class="line"></span><br><span class="line">index =&gt; &quot;springboot-logstash-%&#123;+YYYY.MM&#125;&quot;</span><br><span class="line">document_type =&gt; &quot;%&#123;[message_type]&#125;&quot;</span><br><span class="line">&#125; </span><br><span class="line">stdout &#123; codec =&gt; rubydebug&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.启动、停止、查询状态</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start logstash  #系统去/etc/logstash查找配置文件 </span><br><span class="line">systemctl stop logstash</span><br><span class="line">systemctl status logstash</span><br></pre></td></tr></table></figure>
+<p>4.验证效果</p>
+<p>cd /usr/share/logstash/bin<br>./logstash -e “input{stdin{}} output{stdout{}}”</p>
+<p>启动完成后：输入 hello world! 可以看到结果</p>
+<h2 id="权限验证"><a href="#权限验证" class="headerlink" title="权限验证"></a>权限验证</h2><h3 id="在ES节点上设置用户密码"><a href="#在ES节点上设置用户密码" class="headerlink" title="在ES节点上设置用户密码"></a>在ES节点上设置用户密码</h3><p><strong>1.生成CA证书</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/share/elasticsearch/bin</span><br><span class="line"></span><br><span class="line">[EsUser@localhost ~]$ ./elasticsearch-certutil  ca</span><br><span class="line"></span><br><span class="line">Please enter the desired output file [elastic-stack-ca.p12]: #这里直接回车即可</span><br><span class="line"></span><br><span class="line">Enter password for elastic-stack-ca.p12 :  #这里直接回车即可，不要设置密码</span><br><span class="line"></span><br><span class="line">设置完毕后，会在/usr/share/elasticsearch下看到新生成的文件：</span><br><span class="line"></span><br><span class="line">elastic-stack-ca.p12</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.生成p12秘钥</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./elasticsearch-certutil cert --ca elastic-stack-ca.p12</span><br><span class="line"></span><br><span class="line">Enter password for CA (elastic-stack-ca.p12) : </span><br><span class="line"></span><br><span class="line">Please enter the desired output file [elastic-certificates.p12]:</span><br><span class="line"></span><br><span class="line">Enter password for elastic-certificates.p12 : #这里直接回车即可，不要设置密码，否则后面ES会启动不了</span><br><span class="line"></span><br><span class="line">Certificates written to /usr/share/elasticsearch/elastic-certificates.p12</span><br><span class="line"></span><br><span class="line">设置完毕后，会在/usr/share/elasticsearch/elasticsearch-7.6.2下看到新生成的文件：</span><br><span class="line"></span><br><span class="line">elastic-certificates.p12</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.拷贝证书文件到指定路径下</strong></p>
+<p>cp  /usr/share/elasticsearch/elastic-certificates.p12   /etc/elasticsearch/</p>
+<p><strong>4.将p12认证文件拷贝到其他节点上</strong></p>
+<p>位置  /etc/elasticsearch/</p>
+<p><strong>5.修改所有ES节点的配置文件</strong></p>
+<p>vim /etc/elasticsearch/elasticsearch.yml</p>
+<h1 id="添加内容："><a href="#添加内容：" class="headerlink" title="添加内容："></a>添加内容：</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">http.cors.allow-headers: Authorization</span><br><span class="line">xpack.security.enabled: true</span><br><span class="line">xpack.security.transport.ssl.enabled: true</span><br><span class="line">xpack.security.transport.ssl.verification_mode: certificate</span><br><span class="line">xpack.security.transport.ssl.keystore.path: elastic-certificates.p12 </span><br><span class="line">xpack.security.transport.ssl.truststore.path: elastic-certificates.p12</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>6.重启各ES节点</strong></p>
+<p>systemctl  restart elasticsearch</p>
+<p><strong>7.设置密码</strong></p>
+<p>在其中一个节点上设置密码即可：</p>
+<p>/usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive</p>
+<h3 id="配置kibana用户密码"><a href="#配置kibana用户密码" class="headerlink" title="配置kibana用户密码"></a>配置kibana用户密码</h3><p><strong>1.修改配置文件</strong></p>
+<p>vi  /etc/kibana/kibana.yml</p>
+<p>elasticsearch.username: “kibana_system”<br>elasticsearch.password: “*****”</p>
+<p><strong>2.重启kibana</strong></p>
+<p>systemctl restart kibana</p>
+<p><strong>3.登录kibana</strong></p>
+<p>http:<em>//ip:5601/</em></p>
+<p>用户名：elastic</p>
+<h3 id="配置logstash用户密码"><a href="#配置logstash用户密码" class="headerlink" title="配置logstash用户密码"></a>配置logstash用户密码</h3><p><strong>1.修改配置文件</strong></p>
+<p>vi  /etc/logstash/logstash.yml</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xpack.monitoring.enabled: true</span><br><span class="line">xpack.monitoring.elasticsearch.username: logstash_system</span><br><span class="line">xpack.monitoring.elasticsearch.password: *****</span><br><span class="line">xpack.monitoring.elasticsearch.hosts: [&quot;http://ip:9200&quot;]</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.重启logstash</strong></p>
+<p>systemctl  restart  logstash  </p>
+]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
+      <tags>
+        <tag>elk</tag>
       </tags>
   </entry>
 </search>
