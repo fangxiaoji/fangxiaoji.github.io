@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo-adsb.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"onos.love","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="自定义magic制作及部署方案综述 Notebook中使用自定义magic 样例以mysql数据库连接为例  方案一：用户自定义形式适用场景 个人环境自使用  自定义magic：mysqlmagic的代码 mysqlmagic.py123456789101112131415161718192021222324252627282930313233343536373839404142434445464">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JupyterHub自定义magic及部署">
+<meta property="og:url" content="http://onos.love/2022/02/21/JupyterHub%E8%87%AA%E5%AE%9A%E4%B9%89magic%E5%8F%8A%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="ONOS">
+<meta property="og:description" content="自定义magic制作及部署方案综述 Notebook中使用自定义magic 样例以mysql数据库连接为例  方案一：用户自定义形式适用场景 个人环境自使用  自定义magic：mysqlmagic的代码 mysqlmagic.py123456789101112131415161718192021222324252627282930313233343536373839404142434445464">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-21T06:15:03.000Z">
+<meta property="article:modified_time" content="2022-02-21T06:18:04.548Z">
+<meta property="article:author" content="xuy">
+<meta property="article:tag" content="JupyterHub">
+<meta property="article:tag" content="magic">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://onos.love/2022/02/21/JupyterHub%E8%87%AA%E5%AE%9A%E4%B9%89magic%E5%8F%8A%E9%83%A8%E7%BD%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://onos.love/2022/02/21/JupyterHub%E8%87%AA%E5%AE%9A%E4%B9%89magic%E5%8F%8A%E9%83%A8%E7%BD%B2/","path":"2022/02/21/JupyterHub自定义magic及部署/","title":"JupyterHub自定义magic及部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JupyterHub自定义magic及部署 | ONOS</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ONOS</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享技术经验</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">11</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89magic%E5%88%B6%E4%BD%9C%E5%8F%8A%E9%83%A8%E7%BD%B2%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">自定义magic制作及部署方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%BC%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">综述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">方案一：用户自定义形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.1.</span> <span class="nav-text">适用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89magic%EF%BC%9Amysqlmagic%E7%9A%84%E4%BB%A3%E7%A0%81-mysqlmagic-py"><span class="nav-number">1.2.2.</span> <span class="nav-text">自定义magic：mysqlmagic的代码 mysqlmagic.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">使用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E7%AC%AC%E4%B8%89%E6%96%B9%E5%B7%A5%E5%85%B7%E5%8C%85%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">方案二：第三方工具包形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">适用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%BD%93%E5%89%8D%E7%8E%AF%E5%A2%83%E4%B8%AD%E5%AE%89%E8%A3%85spark-magic"><span class="nav-number">1.3.2.</span> <span class="nav-text">在当前环境中安装spark magic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8notebook%E4%B8%AD%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8spark-magic"><span class="nav-number">1.3.3.</span> <span class="nav-text">在notebook中如何调用spark magic</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89%EF%BC%9AIPython%E5%BA%95%E5%B1%82%E4%BF%AE%E6%94%B9%E6%BA%90%E7%A0%81%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">方案三：IPython底层修改源码形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">适用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89magic%EF%BC%9Amysqlmagic2%E7%9A%84%E4%BB%A3%E7%A0%81-mysqlmagic2-py"><span class="nav-number">1.4.2.</span> <span class="nav-text">自定义magic：mysqlmagic2的代码 mysqlmagic2.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">部署步骤</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">xuy</p>
+  <div class="site-description" itemprop="description">记录工作内容,分享技术经验</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://onos.love/2022/02/21/JupyterHub%E8%87%AA%E5%AE%9A%E4%B9%89magic%E5%8F%8A%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="xuy">
+      <meta itemprop="description" content="记录工作内容,分享技术经验">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONOS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JupyterHub自定义magic及部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-02-21 14:15:03 / 修改时间：14:18:04" itemprop="dateCreated datePublished" datetime="2022-02-21T14:15:03+08:00">2022-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E4%BB%B6%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">软件部署</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="自定义magic制作及部署方案"><a href="#自定义magic制作及部署方案" class="headerlink" title="自定义magic制作及部署方案"></a>自定义magic制作及部署方案</h1><h2 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h2><ul>
+<li>Notebook中使用自定义magic</li>
+<li>样例以mysql数据库连接为例</li>
+</ul>
+<h2 id="方案一：用户自定义形式"><a href="#方案一：用户自定义形式" class="headerlink" title="方案一：用户自定义形式"></a>方案一：用户自定义形式</h2><h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
+<li>个人环境自使用</li>
+</ul>
+<h3 id="自定义magic：mysqlmagic的代码-mysqlmagic-py"><a href="#自定义magic：mysqlmagic的代码-mysqlmagic-py" class="headerlink" title="自定义magic：mysqlmagic的代码 mysqlmagic.py"></a>自定义magic：mysqlmagic的代码 mysqlmagic.py</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> IPython.core.magic <span class="keyword">import</span> (</span><br><span class="line">    cell_magic,</span><br><span class="line">    Magics,</span><br><span class="line">    magics_class</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@magics_class</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mysqlmagics</span>(<span class="params">Magics</span>):</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">## 读取数据1</span></span><br><span class="line"><span class="comment">#db = pymysql.connect(host=&#x27;192.168.144.250&#x27;,user=&#x27;root&#x27;,password=&#x27;1qaz@WSX&#x27;,database=&#x27;actuator&#x27;,charset=&#x27;utf8&#x27;)</span></span><br><span class="line"><span class="comment">#data = pd.read_sql(&#x27;select * from tt_algorithm_model_file&#x27;,con=db)</span></span><br><span class="line"><span class="comment">#print(data)</span></span><br><span class="line"><span class="comment">#db.close()           #关闭连接</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义默认连接参数</span></span><br><span class="line">    pg_default = &#123;</span><br><span class="line">        <span class="string">&#x27;database&#x27;</span>: <span class="string">&#x27;actuator&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;host&#x27;</span>: <span class="string">&#x27;192.168.144.250&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;port&#x27;</span>: <span class="string">&#x27;3306&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;1qaz@WSX&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;charset&#x27;</span>:<span class="string">&#x27;utf8&#x27;</span></span><br><span class="line"><span class="comment"># host: 这个是ip地址，因为我这里是本地的，所以填127.0.0.1，也可以填localhost。</span></span><br><span class="line"><span class="comment"># user：用户名，如果你也是本地的，就填root好了</span></span><br><span class="line"><span class="comment"># passwd：这个是密码</span></span><br><span class="line"><span class="comment"># db：这个是数据库名</span></span><br><span class="line"><span class="comment"># port：这个是端口，本地的一般都是3306</span></span><br><span class="line"><span class="comment"># charset：这个是编码方式，要和你数据库的编码方式一致，要不会连接失败</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 返回greenplum连接对象</span></span><br><span class="line">        <span class="comment"># pymysql.connect(host=&#x27;192.168.144.250&#x27;,user=&#x27;root&#x27;,password=&#x27;1qaz@WSX&#x27;,database=&#x27;actuator&#x27;,charset=&#x27;utf8&#x27;)</span></span><br><span class="line">        <span class="keyword">return</span> pymysql.connect(</span><br><span class="line">            database=self.pg_default[<span class="string">&#x27;database&#x27;</span>],</span><br><span class="line">            host=self.pg_default[<span class="string">&#x27;host&#x27;</span>],</span><br><span class="line">            port=<span class="built_in">int</span>(self.pg_default[<span class="string">&#x27;port&#x27;</span>]),</span><br><span class="line">            user=self.pg_default[<span class="string">&#x27;user&#x27;</span>],</span><br><span class="line">            password=self.pg_default[<span class="string">&#x27;password&#x27;</span>],</span><br><span class="line">            charset=self.pg_default[<span class="string">&#x27;charset&#x27;</span>]</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="comment">#使用 cell_magic 修饰greenplum方法, 还可以用 line_magic或者line_cell_magic</span></span><br><span class="line"><span class="meta">    @cell_magic</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mysqlmagic</span>(<span class="params">self, line=<span class="string">&#x27;&#x27;</span>, cell=<span class="literal">None</span></span>):</span></span><br><span class="line">        sql = cell</span><br><span class="line">        k = self.connect()</span><br><span class="line">        kursor = k.cursor()</span><br><span class="line">        kursor.execute(sql)</span><br><span class="line">        <span class="comment"># 将返回数据放入 pandas, 这样在jupyter页面返回时会更美观一些</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            pd.set_option(<span class="string">&#x27;display.max_columns&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">            pd.set_option(<span class="string">&#x27;display.max_rows&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">            results = kursor.fetchall()</span><br><span class="line">            <span class="keyword">return</span> pd.DataFrame(results)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">return</span> pd.DataFrame([])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注册自定义magic类到正在运行的ipython里面</span></span><br><span class="line">ipy = get_ipython()</span><br><span class="line">ipy.register_magics(Mysqlmagics)</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><ul>
+<li>1.直接在notebook中单元格使用</li>
+<li>2.单独文件直接执行后也可以在工程内使用</li>
+<li>3.将.py文件放入个人的~.ipython\profile_default\startup目录下，每次ipython运行之前都会被自动运行一遍</li>
+</ul>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%%mysqlmagic</span><br><span class="line">select * from tt_algorithm_model_file</span><br></pre></td></tr></table></figure>
+
+<h2 id="方案二：第三方工具包形式"><a href="#方案二：第三方工具包形式" class="headerlink" title="方案二：第三方工具包形式"></a>方案二：第三方工具包形式</h2><h3 id="适用场景-1"><a href="#适用场景-1" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
+<li>各用户环境通用,且方便修改和部署，无需重启jupyter</li>
+<li>代码可参考<a target="_blank" rel="noopener" href="https://github.com/liuweibin6566396837/spark_magic-py-master">https://github.com/liuweibin6566396837/spark_magic-py-master</a></li>
+</ul>
+<h3 id="在当前环境中安装spark-magic"><a href="#在当前环境中安装spark-magic" class="headerlink" title="在当前环境中安装spark magic"></a>在当前环境中安装spark magic</h3><ul>
+<li>第一步：从gitlab下载<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">地址: https://github.com/liuweibin6566396837/spark_magic-py-master</span><br></pre></td></tr></table></figure></li>
+<li>第二步: 切换到需要安装工具包的环境<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例如:</span><br><span class="line">source /opt/app/anaconda3/bin/activate</span><br></pre></td></tr></table></figure></li>
+<li>第三步: setup安装工具包</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">切换到spark_magic-py-master/根目录下 执行：</span><br><span class="line">python setup.py build</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第四步: 拷贝模块到当前环境的site-package下</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">一般来说，第四步是不需要的，但是site-package下没有自动生成spark_magic模块工具包(哪位大佬知晓，可以告知一下)</span><br><span class="line"></span><br><span class="line">cp -r spark_magic xxx/site-packages</span><br><span class="line">使用pip list可以看到spark-magic模块 安装成功！！！</span><br><span class="line"></span><br><span class="line">注意：在console中直接引包会出现NameError: name &#x27;get_ipython&#x27; is not defined错误无需理会，这是由于当前没有ipython进程获取不到该进程，而在jupyter起服务时会起该进程</span><br></pre></td></tr></table></figure>
+
+<h3 id="在notebook中如何调用spark-magic"><a href="#在notebook中如何调用spark-magic" class="headerlink" title="在notebook中如何调用spark magic"></a>在notebook中如何调用spark magic</h3><ul>
+<li>第一步：引入spark magic 第三方工具</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from spark_magic.sparkmagic import *</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第二步：调用spark line magic(默认配置) 或者 cell magic(自定义配置)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">%pyspark           # line magic</span><br><span class="line">%%pyspark          # cell magic</span><br><span class="line">spark.app.name:jupyter-user</span><br><span class="line">spark.pyspark.driver.python:/opt/app/anaconda3/bin/python</span><br><span class="line">spark.pyspark.python:/opt/app/anaconda3/bin/python</span><br><span class="line">spark.driver.memory:2g</span><br><span class="line">spark.executor.memory:2g</span><br><span class="line">spark.executor.cores:3</span><br><span class="line">spark.executor.instances:1</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第三步：引用会话</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark, sc = _</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="方案三：IPython底层修改源码形式"><a href="#方案三：IPython底层修改源码形式" class="headerlink" title="方案三：IPython底层修改源码形式"></a>方案三：IPython底层修改源码形式</h2><h3 id="适用场景-2"><a href="#适用场景-2" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
+<li>各用户环境通用,但修改需要重启jupyter</li>
+</ul>
+<h3 id="自定义magic：mysqlmagic2的代码-mysqlmagic2-py"><a href="#自定义magic：mysqlmagic2的代码-mysqlmagic2-py" class="headerlink" title="自定义magic：mysqlmagic2的代码 mysqlmagic2.py"></a>自定义magic：mysqlmagic2的代码 mysqlmagic2.py</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> pprint <span class="keyword">import</span> pformat</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> IPython.core <span class="keyword">import</span> magic_arguments</span><br><span class="line"><span class="keyword">from</span> IPython.core <span class="keyword">import</span> oinspect</span><br><span class="line"><span class="keyword">from</span> IPython.core <span class="keyword">import</span> page</span><br><span class="line"><span class="keyword">from</span> IPython.core.alias <span class="keyword">import</span> AliasError, Alias</span><br><span class="line"><span class="keyword">from</span> IPython.core.error <span class="keyword">import</span> UsageError</span><br><span class="line"><span class="keyword">from</span> IPython.core.magic <span class="keyword">import</span>  (</span><br><span class="line">    Magics, compress_dhist, magics_class, line_magic, cell_magic, line_cell_magic</span><br><span class="line">)</span><br><span class="line"><span class="keyword">from</span> IPython.testing.skipdoctest <span class="keyword">import</span> skip_doctest</span><br><span class="line"><span class="keyword">from</span> IPython.utils.openpy <span class="keyword">import</span> source_to_unicode</span><br><span class="line"><span class="keyword">from</span> IPython.utils.process <span class="keyword">import</span> abbrev_cwd</span><br><span class="line"><span class="keyword">from</span> IPython.utils.terminal <span class="keyword">import</span> set_term_title</span><br><span class="line"><span class="keyword">from</span> traitlets <span class="keyword">import</span> Bool</span><br><span class="line"><span class="keyword">from</span> warnings <span class="keyword">import</span> warn</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> IPython.core.magic <span class="keyword">import</span> (</span><br><span class="line">    cell_magic,</span><br><span class="line">    Magics,</span><br><span class="line">    magics_class</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@magics_class</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mysqlmagics</span>(<span class="params">Magics</span>):</span></span><br><span class="line"></span><br><span class="line">    cd_force_quiet = Bool(<span class="literal">False</span>,</span><br><span class="line">        <span class="built_in">help</span>=<span class="string">&quot;Force %cd magic to be quiet even if -q is not passed.&quot;</span></span><br><span class="line">    ).tag(config=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, shell=<span class="literal">None</span>, **kwargs</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Now define isexec in a cross platform manner.</span></span><br><span class="line">        self.is_posix = <span class="literal">False</span></span><br><span class="line">        self.execre = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">if</span> os.name == <span class="string">&#x27;posix&#x27;</span>:</span><br><span class="line">            self.is_posix = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                winext = os.environ[<span class="string">&#x27;pathext&#x27;</span>].replace(<span class="string">&#x27;;&#x27;</span>,<span class="string">&#x27;|&#x27;</span>).replace(<span class="string">&#x27;.&#x27;</span>,<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">            <span class="keyword">except</span> KeyError:</span><br><span class="line">                winext = <span class="string">&#x27;exe|com|bat|py&#x27;</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                self.execre = re.<span class="built_in">compile</span>(<span class="string">r&#x27;(.*)\.(%s)$&#x27;</span> % winext,re.IGNORECASE)</span><br><span class="line">            <span class="keyword">except</span> re.error:</span><br><span class="line">                warn(<span class="string">&quot;Seems like your pathext environmental &quot;</span></span><br><span class="line">                     <span class="string">&quot;variable is malformed. Please check it to &quot;</span></span><br><span class="line">                     <span class="string">&quot;enable a proper handle of file extensions &quot;</span></span><br><span class="line">                     <span class="string">&quot;managed for your system&quot;</span>)</span><br><span class="line">                winext = <span class="string">&#x27;exe|com|bat|py&#x27;</span></span><br><span class="line">                self.execre = re.<span class="built_in">compile</span>(<span class="string">r&#x27;(.*)\.(%s)$&#x27;</span> % winext,re.IGNORECASE)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># call up the chain</span></span><br><span class="line">        <span class="built_in">super</span>().__init__(shell=shell, **kwargs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义默认连接参数</span></span><br><span class="line">    pg_default = &#123;</span><br><span class="line">        <span class="string">&#x27;database&#x27;</span>: <span class="string">&#x27;actuator&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;host&#x27;</span>: <span class="string">&#x27;192.168.144.250&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;port&#x27;</span>: <span class="string">&#x27;3306&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;user&#x27;</span>: <span class="string">&#x27;root&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;password&#x27;</span>: <span class="string">&#x27;1qaz@WSX&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;charset&#x27;</span>:<span class="string">&#x27;utf8&#x27;</span></span><br><span class="line"><span class="comment"># host: 这个是ip地址，因为我这里是本地的，所以填127.0.0.1，也可以填localhost。</span></span><br><span class="line"><span class="comment"># user：用户名，如果你也是本地的，就填root好了</span></span><br><span class="line"><span class="comment"># passwd：这个是密码</span></span><br><span class="line"><span class="comment"># db：这个是数据库名</span></span><br><span class="line"><span class="comment"># port：这个是端口，本地的一般都是3306</span></span><br><span class="line"><span class="comment"># charset：这个是编码方式，要和你数据库的编码方式一致，要不会连接失败</span></span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 返回greenplum连接对象</span></span><br><span class="line">        <span class="comment"># pymysql.connect(host=&#x27;192.168.144.250&#x27;,user=&#x27;root&#x27;,password=&#x27;1qaz@WSX&#x27;,database=&#x27;actuator&#x27;,charset=&#x27;utf8&#x27;)</span></span><br><span class="line">        <span class="keyword">return</span> pymysql.connect(</span><br><span class="line">            database=self.pg_default[<span class="string">&#x27;database&#x27;</span>],</span><br><span class="line">            host=self.pg_default[<span class="string">&#x27;host&#x27;</span>],</span><br><span class="line">            port=<span class="built_in">int</span>(self.pg_default[<span class="string">&#x27;port&#x27;</span>]),</span><br><span class="line">            user=self.pg_default[<span class="string">&#x27;user&#x27;</span>],</span><br><span class="line">            password=self.pg_default[<span class="string">&#x27;password&#x27;</span>],</span><br><span class="line">            charset=self.pg_default[<span class="string">&#x27;charset&#x27;</span>]</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="comment">#使用 cell_magic 修饰greenplum方法, 还可以用 line_magic或者line_cell_magic</span></span><br><span class="line"><span class="meta">    @cell_magic</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mysqlmagic2</span>(<span class="params">self, line=<span class="string">&#x27;&#x27;</span>, cell=<span class="literal">None</span></span>):</span></span><br><span class="line">        sql = cell</span><br><span class="line">        k = self.connect()</span><br><span class="line">        kursor = k.cursor()</span><br><span class="line">        kursor.execute(sql)</span><br><span class="line">        <span class="comment"># 将返回数据放入 pandas, 这样在jupyter页面返回时会更美观一些</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            pd.set_option(<span class="string">&#x27;display.max_columns&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">            pd.set_option(<span class="string">&#x27;display.max_rows&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line">            results = kursor.fetchall()</span><br><span class="line">            <span class="keyword">return</span> pd.DataFrame(results)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">return</span> pd.DataFrame([])</span><br></pre></td></tr></table></figure>
+
+<h3 id="部署步骤"><a href="#部署步骤" class="headerlink" title="部署步骤"></a>部署步骤</h3><ul>
+<li>首先，在服务器用源码部署</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ipython的源码下载页面为：https://pypi.python.org/pypi/ipython</span><br><span class="line"></span><br><span class="line">或者是到git页面下载：https://github.com/ipython/ipython/downloads</span><br><span class="line">假设我们下载的文件名为：ipython-7.25.0.tar.gz</span><br><span class="line">#tar zvxf ipython-7.25.0.tar.gz   //解压文件</span><br><span class="line">#cd ipython-7.25.0  //进入刚刚解压的文件夹内</span><br><span class="line"></span><br><span class="line">进入文件加后会看到一个setup.py的安装脚本，运行以下命令进行安装</span><br><span class="line">#python setup.py  install</span><br></pre></td></tr></table></figure>
+<ul>
+<li>再修改：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- 1.在/opt/jupyter/lib/python3.8/site-packages/IPython/core/magics目录下添加自己的magic</span><br><span class="line">- 2.修改同目录下__init__.py：添加一行“from .mysqlmagic2 import Mysqlmagics”</span><br><span class="line">- 3.修改/opt/ipython-7.25.0/IPython/core目录下interactiveshell.py，大约在2280行上下，添加m.Mysqlmagics,</span><br><span class="line">        self.register_magics(m.AutoMagics, m.BasicMagics, m.CodeMagics,</span><br><span class="line">            m.ConfigMagics, m.DisplayMagics, m.ExecutionMagics,</span><br><span class="line">            m.ExtensionMagics, m.HistoryMagics, m.LoggingMagics,</span><br><span class="line">            m.NamespaceMagics, m.OSMagics, m.PackagingMagics,</span><br><span class="line">            m.PylabMagics, m.ScriptMagics,m.Mysqlmagics,</span><br><span class="line">        )</span><br><span class="line">- 4.ipython：进入ipython源码位置，重新编译：#python setup.py  install</span><br><span class="line">- 5.重启jupyter</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JupyterHub/" rel="tag"># JupyterHub</a>
+              <a href="/tags/magic/" rel="tag"># magic</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/21/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2JuputerHub/" rel="prev" title="源码编译部署JuputerHub">
+                  <i class="fa fa-chevron-left"></i> 源码编译部署JuputerHub
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">www.onos.love | ONOS</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
