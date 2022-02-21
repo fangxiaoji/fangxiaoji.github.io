@@ -87,8 +87,8 @@
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
         <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">10</span></a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a></li>
         <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
@@ -158,7 +158,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -169,7 +169,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -198,6 +198,92 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://onos.love/2022/02/21/frp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="xuy">
+      <meta itemprop="description" content="记录工作内容,分享技术经验">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ONOS">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/21/frp/" class="post-title-link" itemprop="url">Frp内网穿透环境部署</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-02-21 14:35:12 / 修改时间：15:21:11" itemprop="dateCreated datePublished" datetime="2022-02-21T14:35:12+08:00">2022-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E4%BB%B6%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">软件部署</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>1，frp下载地址：<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases">https://github.com/fatedier/frp/releases</a></p>
+<p>2，架构示意图：</p>
+<p><img src="/2022/02/21/frp/image-20220221143938805.png" alt="image-20220221143938805"></p>
+<p>3，配置文件:</p>
+<ul>
+<li><p>服务端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vi /etc/frp/frps.ini</span></span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端口</span></span><br><span class="line">bind_port = 23569</span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志位置</span></span><br><span class="line">log_file = /var/log/frps.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 客户端连接服务端的秘钥</span></span><br><span class="line">token = password</span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line">dashboard_port = 7500</span><br><span class="line"><span class="meta">#</span><span class="bash"> dashboard<span class="string">&#x27;s username and password are both optional</span></span></span><br><span class="line">dashboard_user = username</span><br><span class="line">dashboard_pwd = password</span><br></pre></td></tr></table></figure></li>
+<li><p>客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vi /etc/frp/frpc.ini</span></span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端IP</span></span><br><span class="line">server_addr = 81.68.245.218</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端端口</span></span><br><span class="line">server_port = 23569</span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志位置 可不写</span></span><br><span class="line">log_file = /var/log/frps.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 打开加密</span></span><br><span class="line">tls_enable = true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 客户端连接服务端的秘钥</span></span><br><span class="line">token = password</span><br><span class="line"></span><br><span class="line">[节点1]</span><br><span class="line">type = tcp</span><br><span class="line">local_port = 2641</span><br><span class="line">remote_port = 2641</span><br><span class="line"></span><br><span class="line">[节点2]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 10.63.129.11</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 18080</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>4，注册为CentOS系统服务，一下仅以服务端为例，客户端同理</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 进入路径</span></span><br><span class="line">cd ~</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建frp文件夹</span></span><br><span class="line">mkdir frp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 新建服务文件</span></span><br><span class="line">vi frps.service </span><br><span class="line"><span class="meta">#</span><span class="bash"> 编辑内容如下</span> </span><br><span class="line">[Unit]</span><br><span class="line">Description=Frp Server Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=nobody</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端执行文件 和 配置文件地址</span></span><br><span class="line">ExecStart=/usr/bin/frps -c /etc/frp/frps.ini</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 完成服务文件编写后</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 拷贝到服务目录</span></span><br><span class="line">cp frps.service /etc/systemd/system/</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 赋权限</span></span><br><span class="line">chmod u+x /etc/systemd/system/frps.service</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 重载服务</span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开机自启</span></span><br><span class="line">systemctl enable frps</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动</span></span><br><span class="line">systemctl enable frps</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1327,86 +1413,6 @@ http.cors.allow-origin: &quot;*&quot;
 <h3 id="4，测试高可用性"><a href="#4，测试高可用性" class="headerlink" title="4，测试高可用性"></a>4，测试高可用性</h3><p>1、通过Mysql客户端通过VIP连接，看是否连接成功。<br>2、停止master这台mysql服务，是否能正常切换过去，可通过ip addr命令来查看VIP在哪台服务器上。<br>3、可通过查看/var/log/messges日志，看出主备切换过程<br>4、master服务器故障恢复后，是否主动抢占资源，成为活动服务器。</p>
 <h3 id="5，测试用例："><a href="#5，测试用例：" class="headerlink" title="5，测试用例："></a>5，测试用例：</h3><p>一，简单用例：<br>1，停止master上的mysql服务，查看数据库是否能正常使用；恢复master上的mysql，查看数据是否同步。<br>2，停止slave上的mysql服务，查看数据库是否能正常使用；恢复slave上的mysql，查看数据是否同步。<br>3，关闭master服务器，查看数据库是否能正常使用；打开master服务器，查看数据是否正常同步。<br>4，关闭slave服务器，查看数据库是否能正常使用；打开slave服务器，查看数据是否正常同步。<br>5，关闭master服务器上的网络服务，查看数据库是否能正常使用；打开master网络服务，查看数据库是否正常同步。<br>6，关比slave服务器上的网络服务，查看数据库是否能正常使用；打开slave网络服务，查看数据库是否正常同步。</p>
 <p>二，复杂用例：<br>1，关闭master服务器，再打开master服务器，说明数据库跳到slave机器上；打开master服务器之后，查看数据库连接是否重新跳回master。<br>2，如果不跳回master，同样的操作对slave做一遍</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://onos.love/2022/02/21/redisSentinel/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="xuy">
-      <meta itemprop="description" content="记录工作内容,分享技术经验">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ONOS">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/02/21/redisSentinel/" class="post-title-link" itemprop="url">Redis部署</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-02-21 11:07:29 / 修改时间：13:19:14" itemprop="dateCreated datePublished" datetime="2022-02-21T11:07:29+08:00">2022-02-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%BD%AF%E4%BB%B6%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">软件部署</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="一、Redis单机模式部署"><a href="#一、Redis单机模式部署" class="headerlink" title="一、Redis单机模式部署"></a>一、Redis单机模式部署</h2><ol>
-<li><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-4.0.2.tar.gz</span><br><span class="line"></span><br><span class="line">tar -zxvf redis-4.0.2.tar.gz</span><br><span class="line"></span><br><span class="line">yum install gcc</span><br><span class="line"></span><br><span class="line">cd redis-4.0.2</span><br><span class="line"></span><br><span class="line">make MALLOC=libc</span><br><span class="line"></span><br><span class="line">cd src </span><br><span class="line"></span><br><span class="line">make install</span><br></pre></td></tr></table></figure></li>
-<li><h3 id="修改redis-conf文件"><a href="#修改redis-conf文件" class="headerlink" title="修改redis.conf文件"></a>修改<strong>redis.conf文件</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">vi redis.conf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 注释掉 <span class="built_in">bind</span> 127.0.0.1</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改protected-mode 为no</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改daemonize 为yes</span></span><br></pre></td></tr></table></figure></li>
-<li><h3 id="后台启动"><a href="#后台启动" class="headerlink" title="后台启动"></a>后台启动</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-server ../redis.conf</span><br></pre></td></tr></table></figure></li>
-<li><h3 id="开机自启动设置"><a href="#开机自启动设置" class="headerlink" title="开机自启动设置"></a>开机自启动设置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/redis</span><br><span class="line"><span class="meta">#</span><span class="bash">复制redis配置文件(启动脚本需要用到配置文件内容,所以要复制)</span></span><br><span class="line">cp  /opt/redis-4.0.2/redis.conf /etc/redis/6379.conf</span><br><span class="line"><span class="meta">#</span><span class="bash">复制redis启动脚本</span></span><br><span class="line">cp  /opt/redis-4.0.2/utils/redis_init_script /etc/init.d/redis</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">修改启动脚本参数</span></span><br><span class="line">vi /etc/init.d/redis</span><br><span class="line"><span class="meta">#</span><span class="bash">在/etc/init.d/redis文件的头部添加下面两行注释代码,也就是在文件中<span class="comment">#!/bin/sh的下方添加</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> chkconfig: 2345 10 90</span>  </span><br><span class="line"><span class="meta">#</span><span class="bash"> description: Start and Stop redis</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">同时还要修改参数,指定redis的安装路径</span></span><br><span class="line">EXEC=/opt/redis-4.0.2/src/redis-server</span><br><span class="line">CLIEXEC=/opt/redis-4.0.2/src/redis-cli</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li><h3 id="开机自启动Redis"><a href="#开机自启动Redis" class="headerlink" title="开机自启动Redis"></a>开机自启动Redis</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 打开redis命令:</span></span><br><span class="line">service redis start</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭redis命令:</span></span><br><span class="line">service redis stop</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设为开机启动:</span></span><br><span class="line">chkconfig redis on</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设为开机关闭:</span></span><br><span class="line">chkconfig redis off</span><br></pre></td></tr></table></figure></li>
-</ol>
 
       
     </div>

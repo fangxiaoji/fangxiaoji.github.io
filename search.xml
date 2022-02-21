@@ -606,4 +606,29 @@ http.cors.allow-origin: &quot;*&quot;
         <category>软件部署</category>
       </categories>
   </entry>
+  <entry>
+    <title>Frp内网穿透环境部署</title>
+    <url>/2022/02/21/frp/</url>
+    <content><![CDATA[<p>1，frp下载地址：<a href="https://github.com/fatedier/frp/releases">https://github.com/fatedier/frp/releases</a></p>
+<p>2，架构示意图：</p>
+<p><img src="/2022/02/21/frp/image-20220221143938805.png" alt="image-20220221143938805"></p>
+<p>3，配置文件:</p>
+<ul>
+<li><p>服务端</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vi /etc/frp/frps.ini</span></span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端口</span></span><br><span class="line">bind_port = 23569</span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志位置</span></span><br><span class="line">log_file = /var/log/frps.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 客户端连接服务端的秘钥</span></span><br><span class="line">token = password</span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line">dashboard_port = 7500</span><br><span class="line"><span class="meta">#</span><span class="bash"> dashboard<span class="string">&#x27;s username and password are both optional</span></span></span><br><span class="line">dashboard_user = username</span><br><span class="line">dashboard_pwd = password</span><br></pre></td></tr></table></figure></li>
+<li><p>客户端</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vi /etc/frp/frpc.ini</span></span><br><span class="line"></span><br><span class="line">[common]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端IP</span></span><br><span class="line">server_addr = 81.68.245.218</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端端口</span></span><br><span class="line">server_port = 23569</span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志位置 可不写</span></span><br><span class="line">log_file = /var/log/frps.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 打开加密</span></span><br><span class="line">tls_enable = true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 客户端连接服务端的秘钥</span></span><br><span class="line">token = password</span><br><span class="line"></span><br><span class="line">[节点1]</span><br><span class="line">type = tcp</span><br><span class="line">local_port = 2641</span><br><span class="line">remote_port = 2641</span><br><span class="line"></span><br><span class="line">[节点2]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 10.63.129.11</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 18080</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>4，注册为CentOS系统服务，一下仅以服务端为例，客户端同理</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 进入路径</span></span><br><span class="line">cd ~</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建frp文件夹</span></span><br><span class="line">mkdir frp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 新建服务文件</span></span><br><span class="line">vi frps.service </span><br><span class="line"><span class="meta">#</span><span class="bash"> 编辑内容如下</span> </span><br><span class="line">[Unit]</span><br><span class="line">Description=Frp Server Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=nobody</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端执行文件 和 配置文件地址</span></span><br><span class="line">ExecStart=/usr/bin/frps -c /etc/frp/frps.ini</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 完成服务文件编写后</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 拷贝到服务目录</span></span><br><span class="line">cp frps.service /etc/systemd/system/</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 赋权限</span></span><br><span class="line">chmod u+x /etc/systemd/system/frps.service</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 重载服务</span></span><br><span class="line">systemctl daemon-reload</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开机自启</span></span><br><span class="line">systemctl enable frps</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动</span></span><br><span class="line">systemctl enable frps</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>软件部署</category>
+      </categories>
+      <tags>
+        <tag>frp</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
 </search>
